@@ -9,12 +9,31 @@ export class UserRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createUserDto: CreateUserDto) {
-    console.log('HERE 2');
-
     return this.prisma.user.create({
       data: createUserDto,
       select: {
         id: true,
+      },
+    });
+  }
+
+  findOneCredential(email: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        email,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true,
+        posts: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+          },
+        },
       },
     });
   }
@@ -28,6 +47,13 @@ export class UserRepository {
         id: true,
         email: true,
         name: true,
+        posts: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+          },
+        },
       },
     });
   }
@@ -47,9 +73,7 @@ export class UserRepository {
       where: {
         id,
       },
-      data: {
-        email: 'test22@test.com',
-      },
+      data: updateUserDto,
     });
   }
 
