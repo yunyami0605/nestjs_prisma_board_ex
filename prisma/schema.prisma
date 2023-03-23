@@ -10,23 +10,97 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// 유저
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-  createdAt DateTime @default(now()) @db.Timestamptz()
-  updatedAt DateTime @default(now()) @updatedAt()
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  nickname String  @unique
+  password String  @db.VarChar(255)
+  refreshToken String? @db.Text()
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  updatedAt DateTime  @default(now()) @updatedAt()
   deletedAt DateTime? @db.Timestamptz()
+
+  posts      Post[]
+  comments   Comment[]
+  recomments Recomment[]
 }
 
+// 게시글
 model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now()) @db.Timestamptz()
-  updatedAt DateTime @default(now()) @updatedAt()
+  id      Int    @id @default(autoincrement())
+  title   String
+  content String
+  like    Int    @default(0)
+  view    Int    @default(0)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  updatedAt DateTime  @default(now()) @updatedAt()
   deletedAt DateTime? @db.Timestamptz()
+
+  comments    Comment[]
+  tags        Tag[]
+  authorId    Int
+  postTagJoin PostTagJoin[]
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  text String @unique @db.VarChar(32)
+
+  postId      Int
+  postTagJoin PostTagJoin[]
+
+  post Post @relation(fields: [postId], references: [id])
+}
+
+// 중간 가상 조인 테이블
+model PostTagJoin {
+  postId Int
+  tagId  Int
+
+  post Post @relation(fields: [postId], references: [id])
+  tag  Tag  @relation(fields: [tagId], references: [id])
+
+  @@unique([postId, tagId])
+}
+
+model Comment {
+  id      Int    @id @default(autoincrement())
+  content String
+  thank   Int    @default(0)
+  like    Int    @default(0)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  updatedAt DateTime  @updatedAt()
+  deletedAt DateTime? @db.Timestamptz()
+
+  userId     Int
+  postId     Int
+  recomments Recomment[]
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Recomment {
+  id      Int    @id @default(autoincrement())
+  content String
+  // 추후 삭제
+  thank   Int    @default(0)
+  like    Int    @default(0)
+
+  createdAt DateTime  @default(now()) @db.Timestamptz()
+  updatedAt DateTime  @updatedAt()
+  deletedAt DateTime? @db.Timestamptz()
+
+  userId    Int
+  commentId Int
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 }
