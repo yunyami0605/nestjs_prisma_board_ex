@@ -7,6 +7,7 @@ import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { RecommentModule } from './recomment/recomment.module';
 import { AuthModule } from './auth/auth.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 @Module({
   imports: [
