@@ -10,7 +10,13 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('USER API')
 @Controller('user')
@@ -27,9 +33,14 @@ export class UserController {
     type: CreateUserDto,
   })
   @ApiResponse({
-    status: 401,
+    status: 201,
+    description: '생성 성공',
+  })
+  @ApiResponse({
+    status: 400,
     description: '잘못된 폼',
   })
+  @ApiBearerAuth()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
@@ -57,6 +68,11 @@ export class UserController {
     summary: '유저 수정 api',
     description: '유저 수정',
   })
+  @ApiResponse({
+    status: 400,
+    description: '잘못된 폼',
+  })
+  @ApiBearerAuth()
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
