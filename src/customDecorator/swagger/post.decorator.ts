@@ -23,7 +23,7 @@ export interface ApiOperationAndResponsesOptions<T> {
  *@param isNotBearerAuth - 토큰 유무 여부, default: 있음
  *@param DtoType - body data dto
  */
-export function PostDecorator<T = any>(
+export function ApiPostDecorator<T = any>(
   options: ApiOperationAndResponsesOptions<T>,
 ) {
   const { summary, description, responses, isNotBearerAuth, DtoType } = options;

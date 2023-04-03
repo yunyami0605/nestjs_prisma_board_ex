@@ -40,7 +40,6 @@ export class UserController {
     status: 400,
     description: '잘못된 폼',
   })
-  @ApiBearerAuth()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }

@@ -23,7 +23,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { PostDecorator } from 'src/customDecorator/swagger/post.decorator';
+import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
 
 @ApiTags('POST API')
 @Controller('post')
@@ -32,7 +32,7 @@ export class PostController {
 
   @UseGuards(AccessGuard)
   @Post()
-  @PostDecorator({
+  @ApiPostDecorator({
     summary: '유저 생성',
     DtoType: CreatePostDto,
   })
