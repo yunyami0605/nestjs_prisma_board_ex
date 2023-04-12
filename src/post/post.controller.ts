@@ -15,14 +15,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AccessGuard } from 'src/auth/guard/AccessGuard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
 
 @ApiTags('POST API')
@@ -71,8 +64,15 @@ export class PostController {
   @ApiOperation({
     summary: '게시글 리스트 커서 방식 조회 api',
   })
-  @ApiParam({
-    name: '',
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: 'id',
+    required: false,
+    type: String,
   })
   findPageCursor(@Query('search') search?: string, @Query('id') id?: string) {
     return this.postService.findPageCursor(search, +id);

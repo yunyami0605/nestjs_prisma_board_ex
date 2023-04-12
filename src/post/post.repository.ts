@@ -65,7 +65,7 @@ export class PostRepository {
     });
   }
 
-  findPageCursor(search: string, id?: number) {
+  findPageCursor(search?: string, id?: number) {
     const postCount = 4;
 
     return this.prisma.post.findMany({
