@@ -66,7 +66,7 @@ export class PostRepository {
   }
 
   findPageCursor(search?: string, id?: number) {
-    const postCount = 4;
+    const postCount = 10;
 
     return this.prisma.post.findMany({
       where: {
@@ -91,6 +91,11 @@ export class PostRepository {
           },
         },
         tags: true,
+        author: {
+          select: {
+            nickname: true,
+          },
+        },
       },
 
       take: postCount,

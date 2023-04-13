@@ -7,18 +7,23 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
+import { AccessGuard } from 'src/auth/guard/AccessGuard';
+import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 
 @ApiTags('COMMENT API')
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @UseGuards(AccessGuard)
   @Post(':postId')
   @ApiPostDecorator({
     summary: '댓글 생성 api',
@@ -27,8 +32,9 @@ export class CommentController {
   create(
     @Body() createCommentDto: CreateCommentDto,
     @Param('postId') postId: string,
+    @Req() req: RequestWithUser,
   ) {
-    const authorId = 1;
+    const authorId = req.user.sub;
 
     return this.commentService.create(createCommentDto, +postId, authorId);
   }
@@ -54,10 +60,10 @@ export class CommentController {
     summary: '댓글 리스트 커서 api',
   })
   findCommentCursor(
-    @Param('postId') postId: string,
+    @Param('postId') postId?: string,
     @Query('cursorId') cursorId?: string,
   ) {
-    return this.commentService.findCommentCursor(+postId, +cursorId);
+    return this.commentService.findCommentCursor(postId, cursorId);
   }
 
   @Patch(':id')

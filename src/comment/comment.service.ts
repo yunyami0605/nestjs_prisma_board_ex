@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { CommentRepository } from './comment.repository';
+import { Error403, Error404 } from 'src/error/exception';
 
 @Injectable()
 export class CommentService {
   constructor(private readonly commentRepo: CommentRepository) {}
 
   create(createCommentDto: CreateCommentDto, postId: number, authorId: number) {
+    if (!postId) Error404();
+    if (!authorId) Error403();
     return this.commentRepo.create(createCommentDto, postId, authorId);
   }
 
@@ -15,7 +18,8 @@ export class CommentService {
     return this.commentRepo.findAll();
   }
 
-  findCommentCursor(postId?: number, cursorId?: number) {
+  findCommentCursor(postId?: string, cursorId?: string) {
+    if (!postId) Error403();
     return this.commentRepo.findCommentCursor(postId, cursorId);
   }
 

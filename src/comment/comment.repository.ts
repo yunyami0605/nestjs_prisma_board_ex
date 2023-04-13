@@ -32,22 +32,36 @@ export class CommentRepository {
     return this.prisma.comment.findMany();
   }
 
-  findCommentCursor(postId: number, cursorId?: number) {
+  findCommentCursor(postId: string, cursorId?: string) {
     const commentShowCount = 4;
 
     return this.prisma.comment.findMany({
       where: {
-        postId,
+        postId: Number(postId),
         deletedAt: null,
       },
-      include: {
+      select: {
+        content: true,
+        id: true,
+        like: true,
+        postId: true,
+        thank: true,
+        userId: true,
         recomments: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        user: {
+          select: {
+            nickname: true,
+          },
+        },
       },
       take: commentShowCount,
       skip: cursorId ? 1 : 0,
       ...(cursorId && {
         cursor: {
-          id: cursorId,
+          id: Number(cursorId),
         },
       }),
     });
