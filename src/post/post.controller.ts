@@ -15,7 +15,13 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AccessGuard } from 'src/auth/guard/AccessGuard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
-import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
 
 @ApiTags('POST API')
@@ -105,6 +111,10 @@ export class PostController {
   @Delete(':id')
   @ApiOperation({
     summary: '게시글 삭제 api',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '게시글 삭제 성공',
   })
   remove(@Param('id') id: string) {
     return this.postService.remove(+id);
