@@ -13,7 +13,7 @@ import {
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
 import { AccessGuard } from 'src/auth/guard/AccessGuard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
@@ -59,6 +59,16 @@ export class CommentController {
   @ApiOperation({
     summary: '댓글 리스트 커서 api',
   })
+  @ApiParam({
+    name: 'postId',
+    required: true,
+    type: String,
+  })
+  @ApiQuery({
+    name: 'cursorId',
+    required: false,
+    type: String,
+  })
   findCommentCursor(
     @Param('postId') postId?: string,
     @Query('cursorId') cursorId?: string,
@@ -74,12 +84,15 @@ export class CommentController {
     return this.commentService.update(+id, updateCommentDto);
   }
 
+  @UseGuards(AccessGuard)
   @ApiOperation({
     summary: '댓글 삭제 api',
   })
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  remove(@Param('id') id: string, @Req() req: RequestWithUser) {
+    const userId = req.user.sub;
+
+    return this.commentService.remove(+id, userId);
   }
 
   @Post('like/:id')

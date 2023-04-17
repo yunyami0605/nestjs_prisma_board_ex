@@ -8,7 +8,11 @@ import { Error403, Error404 } from 'src/error/exception';
 export class CommentService {
   constructor(private readonly commentRepo: CommentRepository) {}
 
-  create(createCommentDto: CreateCommentDto, postId: number, authorId: number) {
+  create(
+    createCommentDto: CreateCommentDto,
+    postId: number,
+    authorId?: number,
+  ) {
     if (!postId) Error404();
     if (!authorId) Error403();
     return this.commentRepo.create(createCommentDto, postId, authorId);
@@ -31,7 +35,11 @@ export class CommentService {
     return this.commentRepo.update(id, updateCommentDto);
   }
 
-  remove(id: number) {
+  async remove(id: number, userId: number) {
+    const commentData = await this.commentRepo.findOne(id);
+
+    if (commentData.userId !== userId) Error403();
+
     return this.commentRepo.remove(id);
   }
 

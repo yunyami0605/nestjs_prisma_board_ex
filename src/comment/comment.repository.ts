@@ -38,7 +38,7 @@ export class CommentRepository {
     return this.prisma.comment.findMany({
       where: {
         postId: Number(postId),
-        deletedAt: null,
+        // deletedAt: null,
       },
       select: {
         content: true,
@@ -47,7 +47,24 @@ export class CommentRepository {
         postId: true,
         thank: true,
         userId: true,
-        recomments: true,
+        recomments: {
+          select: {
+            id: true,
+            content: true,
+            thank: true,
+            like: true,
+            userId: true,
+            commentId: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true,
+            user: {
+              select: {
+                nickname: true,
+              },
+            },
+          },
+        },
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
@@ -85,12 +102,14 @@ export class CommentRepository {
     });
   }
 
-  remove(id: number) {
-    return this.prisma.comment.delete({
+  async remove(id: number) {
+    const deleteData = await this.prisma.comment.delete({
       where: {
         id,
       },
     });
+
+    return deleteData.id;
   }
 
   like(id: number) {
