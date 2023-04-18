@@ -6,12 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { RecommentService } from './recomment.service';
 import { CreateRecommentDto } from './dto/create-recomment.dto';
 import { UpdateRecommentDto } from './dto/update-recomment.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
+import { NoAccessGuard } from 'src/auth/guard/NoAccessGuard';
+import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
 
 @ApiTags('RECOMMENT API')
 @Controller('recomment')
@@ -64,5 +68,23 @@ export class RecommentController {
   })
   remove(@Param('id') id: string) {
     return this.recommentService.remove(+id);
+  }
+
+  @UseGuards(NoAccessGuard)
+  @Post('like/:id')
+  @ApiOperation({
+    summary: '답글 좋아요 api',
+  })
+  like(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.recommentService.like(+id, req.user.sub);
+  }
+
+  @UseGuards(NoAccessGuard)
+  @Post('dislike/:id')
+  @ApiOperation({
+    summary: '답글 싫어요 api',
+  })
+  dislike(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.recommentService.dislike(+id, req.user.sub);
   }
 }

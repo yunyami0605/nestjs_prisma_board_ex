@@ -47,9 +47,47 @@ export class RecommentRepository {
   }
 
   remove(id: number) {
-    return this.prisma.recomment.delete({
+    return this.prisma.recomment.update({
       where: {
         id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
+
+  like(id: number, userId: number) {
+    return this.prisma.recomment.update({
+      where: {
+        id,
+      },
+      data: {
+        like: { increment: 1 },
+        recommentLikeJoin: {
+          create: {
+            userId,
+          },
+        },
+      },
+    });
+  }
+
+  dislike(id: number, userId: number) {
+    return this.prisma.recomment.update({
+      where: {
+        id,
+      },
+      data: {
+        like: { decrement: 1 },
+        recommentLikeJoin: {
+          delete: {
+            userId_recommentId: {
+              recommentId: id,
+              userId,
+            },
+          },
+        },
       },
     });
   }

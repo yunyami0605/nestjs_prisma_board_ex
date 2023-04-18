@@ -17,6 +17,7 @@ import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
 import { AccessGuard } from 'src/auth/guard/AccessGuard';
 import { RequestWithUser } from 'src/auth/interface/requestWithUser.interface';
+import { NoAccessGuard } from 'src/auth/guard/NoAccessGuard';
 
 @ApiTags('COMMENT API')
 @Controller('comment')
@@ -55,6 +56,7 @@ export class CommentController {
     return this.commentService.findOne(+id);
   }
 
+  @UseGuards(NoAccessGuard)
   @Get('/cursor/:postId')
   @ApiOperation({
     summary: '댓글 리스트 커서 api',
@@ -70,10 +72,15 @@ export class CommentController {
     type: String,
   })
   findCommentCursor(
+    @Req() req: RequestWithUser,
     @Param('postId') postId?: string,
     @Query('cursorId') cursorId?: string,
   ) {
-    return this.commentService.findCommentCursor(postId, cursorId);
+    return this.commentService.findCommentCursor(
+      postId,
+      cursorId,
+      req.user.sub,
+    );
   }
 
   @Patch(':id')
@@ -95,19 +102,21 @@ export class CommentController {
     return this.commentService.remove(+id, userId);
   }
 
+  @UseGuards(NoAccessGuard)
   @Post('like/:id')
   @ApiOperation({
     summary: '댓글 좋아요 api',
   })
-  like(@Param('id') id: string) {
-    return this.commentService.like(+id);
+  like(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.commentService.like(+id, req.user.sub);
   }
 
+  @UseGuards(NoAccessGuard)
   @Post('dislike/:id')
   @ApiOperation({
     summary: '댓글 싫어요 api',
   })
-  dislike(@Param('id') id: string) {
-    return this.commentService.dislike(+id);
+  dislike(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.commentService.dislike(+id, req.user.sub);
   }
 }

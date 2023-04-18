@@ -22,9 +22,9 @@ export class CommentService {
     return this.commentRepo.findAll();
   }
 
-  findCommentCursor(postId?: string, cursorId?: string) {
+  findCommentCursor(postId?: string, cursorId?: string, userId?: number) {
     if (!postId) Error403();
-    return this.commentRepo.findCommentCursor(postId, cursorId);
+    return this.commentRepo.findCommentCursor(postId, cursorId, userId);
   }
 
   findOne(id: number) {
@@ -43,11 +43,11 @@ export class CommentService {
     return this.commentRepo.remove(id);
   }
 
-  like(id: number) {
-    return this.commentRepo.like(id);
+  like(id: number, userId?: number) {
+    return this.commentRepo.like(id, userId);
   }
 
-  dislike(id: number) {
-    return this.commentRepo.dislike(id);
+  dislike(id: number, userId?: number) {
+    return this.commentRepo.dislike(id, userId);
   }
 }

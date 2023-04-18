@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
+import { NoAccessGuard } from 'src/auth/guard/NoAccessGuard';
 
 @ApiTags('POST API')
 @Controller('post')
@@ -50,20 +51,22 @@ export class PostController {
     return this.postService.findPage(+page);
   }
 
+  @UseGuards(AccessGuard)
   @Post('like/:id')
   @ApiOperation({
     summary: '게시글 좋아요 api',
   })
-  like(@Param('id') id: string) {
-    return this.postService.like(+id);
+  like(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.postService.like(+id, req.user.sub);
   }
 
+  @UseGuards(AccessGuard)
   @Post('dislike/:id')
   @ApiOperation({
     summary: '게시글 싫어요 api',
   })
-  dislike(@Param('id') id: string) {
-    return this.postService.dislike(+id);
+  dislike(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.postService.dislike(+id, req.user.sub);
   }
 
   @Get('cursor')
@@ -92,12 +95,13 @@ export class PostController {
     return this.postService.findAll();
   }
 
+  @UseGuards(NoAccessGuard)
   @Get(':id')
   @ApiOperation({
     summary: ' 게시글 조회 api',
   })
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req: RequestWithUser) {
+    return this.postService.findOne(+id, req.user.sub);
   }
 
   @Patch(':id')

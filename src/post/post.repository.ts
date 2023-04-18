@@ -8,8 +8,6 @@ export class PostRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(createPostDto: CreatePostDto) {
-    const uniqueTagTexts = [...new Set(createPostDto.tags)];
-
     return this.prisma.post.create({
       data: {
         title: createPostDto.title,
@@ -33,7 +31,7 @@ export class PostRepository {
     return this.prisma.post.findMany();
   }
 
-  findOne(id: number) {
+  findOne(id: number, userId?: number) {
     return this.prisma.post.findFirst({
       where: {
         id,
@@ -44,6 +42,11 @@ export class PostRepository {
           select: {
             email: true,
             name: true,
+          },
+        },
+        postLikeJoin: {
+          where: {
+            userId: userId,
           },
         },
       },
@@ -130,31 +133,44 @@ export class PostRepository {
   }
 
   remove(id: number) {
-    return this.prisma.post.delete({
+    return this.prisma.post.update({
       where: {
         id,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
   }
 
-  like(id: number) {
+  like(id: number, userId: number) {
     return this.prisma.post.update({
       where: {
         id,
       },
       data: {
         like: { increment: 1 },
+        postLikeJoin: {
+          create: {
+            userId,
+          },
+        },
       },
     });
   }
 
-  dislike(id: number) {
+  dislike(id: number, userId: number) {
     return this.prisma.post.update({
       where: {
         id,
       },
       data: {
         like: { decrement: 1 },
+        postLikeJoin: {
+          delete: {
+            userId_postId: { postId: id, userId },
+          },
+        },
       },
     });
   }

@@ -29,4 +29,12 @@ export class RecommentService {
   remove(id: number) {
     return this.recommentRepo.remove(id);
   }
+
+  like(id: number, userId?: number) {
+    return this.recommentRepo.like(id, userId);
+  }
+
+  dislike(id: number, userId?: number) {
+    return this.recommentRepo.dislike(id, userId);
+  }
 }

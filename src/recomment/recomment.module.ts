@@ -3,9 +3,10 @@ import { RecommentService } from './recomment.service';
 import { RecommentController } from './recomment.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { RecommentRepository } from './recomment.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, AuthModule],
   controllers: [RecommentController],
   providers: [RecommentService, RecommentRepository],
 })

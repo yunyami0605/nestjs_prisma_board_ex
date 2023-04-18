@@ -32,7 +32,7 @@ export class CommentRepository {
     return this.prisma.comment.findMany();
   }
 
-  findCommentCursor(postId: string, cursorId?: string) {
+  findCommentCursor(postId: string, cursorId?: string, userId?: number) {
     const commentShowCount = 4;
 
     return this.prisma.comment.findMany({
@@ -63,6 +63,11 @@ export class CommentRepository {
                 nickname: true,
               },
             },
+            recommentLikeJoin: {
+              where: {
+                userId,
+              },
+            },
           },
         },
         createdAt: true,
@@ -71,6 +76,11 @@ export class CommentRepository {
         user: {
           select: {
             nickname: true,
+          },
+        },
+        commentLikeJoin: {
+          where: {
+            userId,
           },
         },
       },
@@ -103,33 +113,49 @@ export class CommentRepository {
   }
 
   async remove(id: number) {
-    const deleteData = await this.prisma.comment.delete({
+    const deleteData = await this.prisma.comment.update({
       where: {
         id,
+      },
+      data: {
+        deletedAt: new Date(),
       },
     });
 
     return deleteData.id;
   }
 
-  like(id: number) {
+  like(id: number, userId: number) {
     return this.prisma.comment.update({
       where: {
         id,
       },
       data: {
         like: { increment: 1 },
+        commentLikeJoin: {
+          create: {
+            userId,
+          },
+        },
       },
     });
   }
 
-  dislike(id: number) {
+  dislike(id: number, userId: number) {
     return this.prisma.comment.update({
       where: {
         id,
       },
       data: {
         like: { decrement: 1 },
+        commentLikeJoin: {
+          delete: {
+            userId_commentId: {
+              commentId: id,
+              userId,
+            },
+          },
+        },
       },
     });
   }

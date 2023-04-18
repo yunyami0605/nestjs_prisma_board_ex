@@ -15,8 +15,8 @@ export class PostService {
     return this.postRepo.findAll();
   }
 
-  findOne(id: number) {
-    return this.postRepo.findOne(id);
+  findOne(id: number, userId?: number) {
+    return this.postRepo.findOne(id, userId);
   }
 
   findPage(page: number) {
@@ -35,11 +35,11 @@ export class PostService {
     return this.postRepo.remove(id);
   }
 
-  like(id: number) {
-    return this.postRepo.like(id);
+  like(id: number, userId: number) {
+    return this.postRepo.like(id, userId);
   }
 
-  dislike(id: number) {
-    return this.postRepo.dislike(id);
+  dislike(id: number, userId: number) {
+    return this.postRepo.dislike(id, userId);
   }
 }
