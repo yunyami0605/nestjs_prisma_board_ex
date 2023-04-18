@@ -92,4 +92,12 @@ export class AuthService {
       throw new UnauthorizedException();
     }
   }
+
+  async getUserId(token: string, options: JwtVerifyOptions) {
+    try {
+      return this.jwtService.verify<{ sub: number }>(token, options);
+    } catch (err) {
+      return { sub: undefined };
+    }
+  }
 }
