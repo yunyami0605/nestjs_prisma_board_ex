@@ -12,20 +12,23 @@ datasource db {
 
 // 유저
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  name     String?
-  nickname String  @unique
-  password String  @db.VarChar(255)
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  name         String?
+  nickname     String  @unique
+  password     String  @db.VarChar(255)
   refreshToken String? @db.Text()
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   updatedAt DateTime  @default(now()) @updatedAt()
   deletedAt DateTime? @db.Timestamptz()
 
-  posts      Post[]
-  comments   Comment[]
-  recomments Recomment[]
+  posts             Post[]
+  comments          Comment[]
+  recomments        Recomment[]
+  postLikeJoin      PostLikeJoin[]
+  commentLikeJoin   CommentLikeJoin[]
+  recommentLikeJoin RecommentLikeJoin[]
 }
 
 // 게시글
@@ -40,12 +43,24 @@ model Post {
   updatedAt DateTime  @default(now()) @updatedAt()
   deletedAt DateTime? @db.Timestamptz()
 
-  comments    Comment[]
-  tags        Tag[]
-  authorId    Int
-  postTagJoin PostTagJoin[]
+  comments     Comment[]
+  tags         Tag[]
+  authorId     Int
+  postTagJoin  PostTagJoin[]
+  postLikeJoin PostLikeJoin[]
 
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model PostLikeJoin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
 }
 
 model Tag {
@@ -79,12 +94,24 @@ model Comment {
   updatedAt DateTime  @updatedAt()
   deletedAt DateTime? @db.Timestamptz()
 
-  userId     Int
-  postId     Int
-  recomments Recomment[]
+  userId          Int
+  postId          Int
+  recomments      Recomment[]
+  commentLikeJoin CommentLikeJoin[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model CommentLikeJoin {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  commentId Int
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, commentId])
 }
 
 model Recomment {
@@ -98,9 +125,21 @@ model Recomment {
   updatedAt DateTime  @updatedAt()
   deletedAt DateTime? @db.Timestamptz()
 
-  userId    Int
-  commentId Int
+  userId            Int
+  commentId         Int
+  recommentLikeJoin RecommentLikeJoin[]
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+}
+
+model RecommentLikeJoin {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  recommentId Int
+  createdAt   DateTime  @default(now()) @db.Timestamptz()
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recomment   Recomment @relation(fields: [recommentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recommentId])
 }
