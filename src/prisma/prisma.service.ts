@@ -20,20 +20,20 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     this.$use(async (params, next) => {
       console.log('@ PARAM');
       console.log(params);
-      if (params.action === 'delete') {
-        params.action = 'update';
-        params.args['data'] = { deletedAt: new Date() };
-      }
+      // if (params.action === 'delete') {
+      //   params.action = 'update';
+      //   params.args['data'] = { deletedAt: new Date() };
+      // }
 
-      if (params.action == 'deleteMany') {
-        // Delete many queries
-        params.action = 'updateMany';
-        if (params.args.data != undefined) {
-          params.args.data['deletedAt'] = new Date();
-        } else {
-          params.args['data'] = { deletedAt: new Date() };
-        }
-      }
+      // if (params.action == 'deleteMany') {
+      //   // Delete many queries
+      //   params.action = 'updateMany';
+      //   if (params.args.data != undefined) {
+      //     params.args.data['deletedAt'] = new Date();
+      //   } else {
+      //     params.args['data'] = { deletedAt: new Date() };
+      //   }
+      // }
 
       const result = await next(params);
 
