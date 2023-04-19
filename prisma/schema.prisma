@@ -78,11 +78,11 @@ model Tag {
 // 중간 가상 조인 테이블
 model PostTagJoin {
   // id        Int      @id @default(autoincrement())
-  postId    Int
-  tagId     Int
+  postId Int
+  tagId  Int
   // createdAt DateTime @default(now()) @db.Timestamptz()
-  post      Post     @relation(fields: [postId], references: [id])
-  tag       Tag      @relation(fields: [tagId], references: [id])
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([postId, tagId])
 }

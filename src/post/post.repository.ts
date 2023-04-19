@@ -58,6 +58,7 @@ export class PostRepository {
         updatedAt: true,
         deletedAt: true,
         postLikeJoin: true,
+        authorId: true,
         postTagJoin: { select: { tag: { select: { text: true } } } },
         author: {
           select: {
@@ -127,9 +128,58 @@ export class PostRepository {
     });
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
+  async update(id: number, updatePostDto: UpdatePostDto) {
     const { title, content, authorId, tags } = updatePostDto;
-    const uniqueTagTexts = [...new Set(tags)];
+
+    const tagsData = await this.prisma.tag.findMany({
+      where: {
+        postId: id,
+      },
+    });
+
+    const deleteTags = tagsData.filter((item) => {
+      let isExist = tags.some((tag) => {
+        return tag === item.text;
+      });
+
+      return !isExist;
+    });
+
+    const addTags = tags.filter((item) => {
+      let isExist = tagsData.some((tag) => {
+        return tag.text === item;
+      });
+
+      return !isExist;
+    });
+
+    // 수정된 태그 중 추가된 태그 추가
+    const postTagCreatePromises = addTags.map((text) =>
+      this.prisma.postTagJoin.create({
+        data: {
+          tag: {
+            connectOrCreate: {
+              where: { text },
+              create: { text, postId: id },
+            },
+          },
+          post: { connect: { id } },
+        },
+      }),
+    );
+
+    await Promise.all(postTagCreatePromises);
+
+    // 수정된 태그 중 삭제된 태그 추가
+    const deleteTagCreatePromise = deleteTags.map((item) =>
+      this.prisma.tag.delete({
+        where: {
+          id: item.id,
+        },
+      }),
+    );
+
+    await Promise.all(deleteTagCreatePromise);
 
     return this.prisma.post.update({
       where: {
@@ -139,11 +189,6 @@ export class PostRepository {
         title,
         content,
         authorId,
-        // tags: {
-        //   create: uniqueTagTexts.map((tag) => ({
-        //     text: tag,
-        //   })),
-        // },
       },
     });
   }
