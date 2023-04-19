@@ -7,24 +7,35 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createPostDto: CreatePostDto) {
-    return this.prisma.post.create({
+  async create(createPostDto: CreatePostDto) {
+    const createdPost = await this.prisma.post.create({
       data: {
         title: createPostDto.title,
         content: createPostDto.content,
         authorId: createPostDto.authorId,
-        tags: {
-          // connectOrCreate: 존재하는 태그를 연결하고 존재하지 않으면 생성함
-          connectOrCreate: createPostDto.tags.map((tagText) => ({
-            where: { text: tagText },
-            create: { text: tagText },
-          })),
-        },
       },
       select: {
         id: true,
       },
     });
+
+    const postTagCreatePromises = createPostDto.tags.map((text) =>
+      this.prisma.postTagJoin.create({
+        data: {
+          tag: {
+            connectOrCreate: {
+              where: { text },
+              create: { text, postId: createdPost.id },
+            },
+          },
+          post: { connect: { id: createdPost.id } },
+        },
+      }),
+    );
+
+    await Promise.all(postTagCreatePromises);
+
+    return createdPost;
   }
 
   findAll() {
@@ -37,16 +48,21 @@ export class PostRepository {
         id,
         deletedAt: null,
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        like: true,
+        view: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        postLikeJoin: true,
+        postTagJoin: { select: { tag: { select: { text: true } } } },
         author: {
           select: {
             email: true,
             name: true,
-          },
-        },
-        postLikeJoin: {
-          where: {
-            userId: userId,
           },
         },
       },
@@ -61,7 +77,7 @@ export class PostRepository {
         deletedAt: null,
       },
       include: {
-        tags: true,
+        postTagJoin: true,
       },
       skip: (page - 1) * postCount,
       take: postCount,
@@ -93,7 +109,7 @@ export class PostRepository {
             comments: true,
           },
         },
-        tags: true,
+        postTagJoin: true,
         author: {
           select: {
             nickname: true,
@@ -123,11 +139,11 @@ export class PostRepository {
         title,
         content,
         authorId,
-        tags: {
-          create: uniqueTagTexts.map((tag) => ({
-            text: tag,
-          })),
-        },
+        // tags: {
+        //   create: uniqueTagTexts.map((tag) => ({
+        //     text: tag,
+        //   })),
+        // },
       },
     });
   }

@@ -44,7 +44,7 @@ model Post {
   deletedAt DateTime? @db.Timestamptz()
 
   comments     Comment[]
-  tags         Tag[]
+  // tags         Tag[]
   authorId     Int
   postTagJoin  PostTagJoin[]
   postLikeJoin PostLikeJoin[]
@@ -67,19 +67,22 @@ model Tag {
   id   Int    @id @default(autoincrement())
   text String @unique @db.VarChar(32)
 
+  createdAt DateTime @default(now()) @db.Timestamptz()
+
   postId      Int
   postTagJoin PostTagJoin[]
 
-  post Post @relation(fields: [postId], references: [id])
+  // post Post @relation(fields: [postId], references: [id])
 }
 
 // 중간 가상 조인 테이블
 model PostTagJoin {
-  postId Int
-  tagId  Int
-
-  post Post @relation(fields: [postId], references: [id])
-  tag  Tag  @relation(fields: [tagId], references: [id])
+  // id        Int      @id @default(autoincrement())
+  postId    Int
+  tagId     Int
+  // createdAt DateTime @default(now()) @db.Timestamptz()
+  post      Post     @relation(fields: [postId], references: [id])
+  tag       Tag      @relation(fields: [tagId], references: [id])
 
   @@unique([postId, tagId])
 }
