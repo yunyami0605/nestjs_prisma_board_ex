@@ -24,11 +24,15 @@ import {
 } from '@nestjs/swagger';
 import { ApiPostDecorator } from 'src/customDecorator/swagger/post.decorator';
 import { NoAccessGuard } from 'src/auth/guard/NoAccessGuard';
+import { RedisService } from 'src/redis/redis.service';
 
 @ApiTags('POST API')
 @Controller('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    private readonly redisService: RedisService,
+  ) {}
 
   @UseGuards(AccessGuard)
   @Post()
@@ -83,8 +87,13 @@ export class PostController {
     required: false,
     type: String,
   })
-  findPageCursor(@Query('search') search?: string, @Query('id') id?: string) {
-    return this.postService.findPageCursor(search, +id);
+  async findPageCursor(
+    @Query('search') search?: string,
+    @Query('id') id?: string,
+  ) {
+    const res = await this.postService.findPageCursor(search, +id);
+    this.redisService.set('cursor', res, { ttl: 200 });
+    return res;
   }
 
   @Get('all')
