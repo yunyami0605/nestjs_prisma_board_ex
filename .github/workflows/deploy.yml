@@ -52,7 +52,7 @@ jobs:
           aws-region: us-east-1
 
       - name: upload to S3
-        run: aws s3 cp --region us-east-1 ./nestjs_prisma_board_ex.zip s3://postgresql-study/deploy
+        run: aws s3 cp --region us-east-1 ./nestjs_prisma_board_ex.zip s3://postgresql-study/deploy/
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
