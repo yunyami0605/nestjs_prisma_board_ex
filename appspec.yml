@@ -2,17 +2,17 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/build
+    destination: /home/ec2-user/build
     overwrite: yes
 
 permissions:
-  - object: /home/ubuntu
-    pattern: '**'
-    owner: ubuntu
-    group: ubuntu
+  - object: /home/ec2-user
+    owner: root
+    group: root
+    mode: 755
 
 hooks:
   AfterInstall:
     - location: scripts/after-deploy.sh
       timeout: 300
-      runas: ubuntu
+      runas: root
