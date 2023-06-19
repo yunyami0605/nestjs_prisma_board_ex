@@ -73,6 +73,8 @@ export class PostController {
     return this.postService.dislike(+id, req.user.sub);
   }
 
+  // @CustomCacheInterceptor()
+  // @Log('Find all cats')
   @Get('cursor')
   @ApiOperation({
     summary: '게시글 리스트 커서 방식 조회 api',
