@@ -5,10 +5,12 @@ PM2_PATH=/usr/bin/pm2
 
 cd $REPOSITORY
 
-sudo $YARN_PATH
+mkdir test2
 
-sudo $YARN_PATH build
+# sudo $YARN_PATH
 
-sudo $PM2_PATH restart
+# sudo $YARN_PATH build
 
-sudo $PM2_PATH start serverapp
+# sudo $PM2_PATH restart
+
+# sudo $PM2_PATH start serverapp
