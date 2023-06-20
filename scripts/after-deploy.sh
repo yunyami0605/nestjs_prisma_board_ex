@@ -1,12 +1,14 @@
 #!/bin/bash
 REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
+YARN_PATH=~/.nvm/versions/node/v16.18.1/bin/yarn
+PM2_PATH=~/.nvm/versions/node/v16.18.1/bin/pm2
 
 cd $REPOSITORY
 
-yarn
+sudo $YARN_PATH
 
-yarn build
+sudo $YARN_PATH build
 
-pm2 restart
+sudo $PM2_PATH restart
 
-pm2 start serverapp
+sudo $PM2_PATH start serverapp
