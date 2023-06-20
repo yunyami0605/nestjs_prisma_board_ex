@@ -3,10 +3,10 @@ REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
 
 cd $REPOSITORY
 
-sudo yarn
+yarn
 
-sudo yarn build
+yarn build
 
 pm2 restart
 
-sudo pm2 start serverapp
+pm2 start serverapp
