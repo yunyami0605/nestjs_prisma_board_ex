@@ -20,15 +20,18 @@ REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
 
 cd $REPOSITORY
 
+rm package-lock.json
+rm -rf node_modules
+
 yarn
 
 npm list -g
 
-# yarn build
+yarn build
 
-# pm2 restart
+pm2 restart
 
-# pm2 start serverapp
+pm2 start serverapp
 
 
 # REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
