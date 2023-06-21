@@ -7,14 +7,14 @@ cd $REPOSITORY
 
 mkdir test2
 
-sudo ln -s /root/.nvm/versions/node/v16.18.1/bin/yarn /usr/bin/yarn
+# sudo ln -s /root/.nvm/versions/node/v16.18.1/bin/yarn /usr/bin/yarn
 
-sudo ln -s /root/.nvm/versions/node/v16.18.1/bin/pm2 /usr/bin/pm2
+# sudo ln -s /root/.nvm/versions/node/v16.18.1/bin/pm2 /usr/bin/pm2
 
-sudo $YARN_PATH
+sudo yarn
 
-sudo $YARN_PATH build
+sudo yarn build
 
-sudo $PM2_PATH restart
+sudo pm2 restart
 
-sudo $PM2_PATH start serverapp
+sudo pm2 start serverapp
