@@ -5,18 +5,19 @@ PM2_PATH=~/.nvm/versions/node/v16.18.1/bin/pm2
 
 cd $REPOSITORY
 
-mkdir test2
+sudo env "PATH=$PATH" $YARN_PATH
 
-which yarn
+sudo env "PATH=$PATH" $YARN_PATH build
+
+sudo env "PATH=$PATH" $PM2_PATH restart
+
+sudo env "PATH=$PATH" $PM2_PATH start serverapp
+
+
+# mkdir test2
+
+# which yarn
 
 # sudo ln -s /root/.nvm/versions/node/v16.18.1/bin/yarn /usr/bin/yarn
 
 # sudo ln -s /root/.nvm/versions/node/v16.18.1/bin/pm2 /usr/bin/pm2
-
-sudo $YARN_PATH
-
-sudo $YARN_PATH build
-
-sudo $PM2_PATH restart
-
-sudo $PM2_PATH start serverapp
