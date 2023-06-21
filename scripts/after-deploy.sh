@@ -22,7 +22,9 @@ cd $REPOSITORY
 
 yarn
 
-yarn build
+npm list -g
+
+# yarn build
 
 # pm2 restart
 
