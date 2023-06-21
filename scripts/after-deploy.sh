@@ -10,11 +10,11 @@ export NVM_DIR="$HOME/.nvm"
 # nvm을 통해 Node.js 설치
 nvm install 16.18.1
 
-sudo npm install -g yarn
-sudo npm install -g pm2
+which npm
 
-nvm --version
-node -v
+npm install -g yarn
+npm install -g pm2
+
 
 REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
 
