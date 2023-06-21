@@ -1,21 +1,32 @@
 #!/bin/bash
 
-REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
-YARN_PATH=/usr/local/bin/yarn
-PM2_PATH=/usr/local/bin/pm2
+# nvm 설치
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 
-node -v
+# nvm 사용 설정
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# nvm을 통해 Node.js 설치
+nvm install 16.18.1
+
+sudo npm install -g yarn
+sudo npm install -g pm2
+
 nvm --version
+node -v
+
+REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
 
 cd $REPOSITORY
 
-$YARN_PATH
+yarn
 
-$YARN_PATH build
+yarn build
 
-$PM2_PATH restart
+pm2 restart
 
-$PM2_PATH start serverapp
+pm2 start serverapp
 
 
 # REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
