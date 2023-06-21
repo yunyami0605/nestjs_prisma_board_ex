@@ -4,6 +4,9 @@ REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
 YARN_PATH=/usr/local/bin/yarn
 PM2_PATH=/usr/local/bin/pm2
 
+node -v
+nvm --version
+
 cd $REPOSITORY
 
 $YARN_PATH
