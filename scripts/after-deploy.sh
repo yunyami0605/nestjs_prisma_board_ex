@@ -43,9 +43,9 @@ yarn
 
 npm list -g
 
-timeout 400s yarn build
+# timeout 400s yarn build
 
-pm2 restart
+# pm2 restart
 
-pm2 start serverapp
+# pm2 start serverapp
 
