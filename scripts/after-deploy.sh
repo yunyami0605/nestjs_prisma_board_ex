@@ -36,7 +36,7 @@ REPOSITORY=/home/ec2-user/nestjs_prisma_board_ex
 
 cd $REPOSITORY
 
-rm package-lock.json
+# rm package-lock.json
 rm -rf node_modules
 
 yarn
